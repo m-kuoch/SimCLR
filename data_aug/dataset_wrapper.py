@@ -23,7 +23,7 @@ class DataSetWrapper(object):
         #train_dataset = datasets.STL10('./data', split='train+unlabeled', download=True,
                                        #transform=SimCLRDataTransform(data_augment))
 
-        train_loader, valid_loader = self.get_train_validation_data_loaders(train_dataset)
+        train_loader, valid_loader = self.get_train_validation_data_loaders()
         return train_loader, valid_loader
 
     def _get_simclr_pipeline_transform(self):
