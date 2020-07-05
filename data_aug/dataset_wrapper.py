@@ -18,10 +18,10 @@ class DataSetWrapper(object):
         self.input_shape = eval(input_shape)
 
     def get_data_loaders(self):
-        data_augment = self._get_simclr_pipeline_transform()
+        #data_augment = self._get_simclr_pipeline_transform()
 
-        train_dataset = datasets.STL10('./data', split='train+unlabeled', download=True,
-                                       transform=SimCLRDataTransform(data_augment))
+        #train_dataset = datasets.STL10('./data', split='train+unlabeled', download=True,
+                                       #transform=SimCLRDataTransform(data_augment))
 
         train_loader, valid_loader = self.get_train_validation_data_loaders(train_dataset)
         return train_loader, valid_loader
@@ -37,23 +37,28 @@ class DataSetWrapper(object):
                                               transforms.ToTensor()])
         return data_transforms
 
-    def get_train_validation_data_loaders(self, train_dataset):
+    def get_train_validation_data_loaders(self)  #, train_dataset):
         # obtain training indices that will be used for validation
-        num_train = len(train_dataset)
-        indices = list(range(num_train))
-        np.random.shuffle(indices)
+        #num_train = len(train_dataset)
+        #indices = list(range(num_train))
+        #np.random.shuffle(indices)
 
-        split = int(np.floor(self.valid_size * num_train))
-        train_idx, valid_idx = indices[split:], indices[:split]
+        #split = int(np.floor(self.valid_size * num_train))
+        #train_idx, valid_idx = indices[split:], indices[:split]
 
         # define samplers for obtaining training and validation batches
-        train_sampler = SubsetRandomSampler(train_idx)
-        valid_sampler = SubsetRandomSampler(valid_idx)
+        #train_sampler = SubsetRandomSampler(train_idx)
+        #valid_sampler = SubsetRandomSampler(valid_idx)
+        data_augment = self._get_simclr_pipeline_transform()
+        train_dataset = datasets.EMNIST("./data", split="balanced", download=True, train=True,
+                                        transform=SimCLRDataTransform(data_augment))
+        train_dataset = datasets.EMNIST("./data", split="balanced", download=True, train=False,
+                                        transform=SimCLRDataTransform(data_augment))
 
-        train_loader = DataLoader(train_dataset, batch_size=self.batch_size, sampler=train_sampler,
+        train_loader = DataLoader(train_dataset, batch_size=self.batch_size,
                                   num_workers=self.num_workers, drop_last=True, shuffle=False)
 
-        valid_loader = DataLoader(train_dataset, batch_size=self.batch_size, sampler=valid_sampler,
+        valid_loader = DataLoader(train_dataset, batch_size=self.batch_size,
                                   num_workers=self.num_workers, drop_last=True)
         return train_loader, valid_loader
 
