@@ -7,7 +7,7 @@ from torchvision import datasets
 
 np.random.seed(0)
 
-"Testing"
+
 class DataSetWrapper(object):
 
     def __init__(self, batch_size, num_workers, valid_size, input_shape, s):
